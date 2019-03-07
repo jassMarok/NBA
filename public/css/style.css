@@ -86,3 +86,14 @@ footer {
     font-size: 70px;
     margin-top: 0px;
 }
+
+/* Subscription */
+
+
+.error, .success {
+    display: none;
+}
+
+.error.show, .success.show{
+    display: block;
+}
