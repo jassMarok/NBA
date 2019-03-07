@@ -1,0 +1,51 @@
+import React from 'react';
+import Slider from 'react-slick';
+
+const settings = {
+    arrow : false,
+    dots : false,
+    infinite : true,
+    speed : 500,
+    slidesToShow : 1,
+    slidesToScroll : 1
+}
+
+const generateSlides = ({slides}) => {
+    
+    //Conditonal to avoid the first render
+    if(!slides){
+        return;
+    }
+
+    //Return JSX
+    return(
+        <Slider {...settings}>
+            {/**Map Over variable */}
+            {slides.map((item)=>{
+                //Return JSX
+                return(
+                    <div key={item.id}><div className="item-slider"
+                    style={{background:`url(/images/covers/${item.cover})`}}
+                    >
+                        <div className="caption">
+                            <h4>{item.topic}</h4>
+                            <p>{item.title}</p>
+                        </div>    
+                    </div>
+                    </div>
+                )
+            })}
+        </Slider>
+    );
+}
+
+
+const Featured = (props) => {
+    return (
+        <div>
+            {generateSlides(props)}
+        </div>
+    );
+}
+
+export default Featured;
