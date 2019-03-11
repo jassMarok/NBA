@@ -1,23 +1,33 @@
 import React, { Component } from 'react';
 
+const URL_POLL = "http://localhost:3004/teams";
+
 class Poll extends Component{
 
     constructor(props){
         super(props);
 
         this.state = {
-            pollTeams:''
+            pollTeams:[]
         }
     }
 
     fetchPoll() {
-        const URL_POLL = "http://localhost:3004/teams";
+        
 
         fetch(`${URL_POLL}?poll=true&_sort=count&_order=desc`,{method:'get'})
-        .then(res=>res.json())
+        .then((res)=>{
+            const data = res.json();
+            if(res.ok !== true){
+                throw { message:`An Error on fetch at ${URL_POLL}`};
+            }   
+            return data;
+        })
         .then((json)=>{
             this.setState({pollTeams:json});
-            console.log(this.state);
+        })
+        .catch((ex)=>{
+            console.log(ex.message);
         })
     }
 
@@ -25,15 +35,30 @@ class Poll extends Component{
         this.fetchPoll();
     }
 
-    renderPoll(){
+    addCount(count, id){
+        const URL_TEAM = `${URL_POLL}/${id}`;
+        fetch(URL_TEAM, {
+            method:'PATCH',
+            headers:{
+                'ACCEPT':'application/json',
+                'Content-type':'application/json'
+            },
+            body:JSON.stringify({count:count+1})
+        })
+        .then(()=>{
+            this.fetchPoll();
+        })
+    }
 
-        if(!this.state.pollTeams){
-            return;  
-        }
-        return this.state.pollTeams.map((item)=>{
+    renderPoll(){
+        const position = ["1st", "2nd", "3rd"];
+        return this.state.pollTeams.map((item, index)=>{
             return(
-                <div key={item.id} className="poll_item">
+                <div key={item.id} className="poll_item" 
+                onClick={()=>this.addCount(item.count,item.id)}>
                     <img alt={item.name} src={`/images/teams/${item.logo}`}/>
+                    <h4>{position[index]}</h4>
+                    <div>{item.count} Votes</div>
                 </div>
             );
         })
